@@ -17,3 +17,5 @@ pinouts bc these are not labeled
 - i2c2 - IMU - BN055
 - Sun sensor and thermistor connected through bus
 - 
+
+:(
