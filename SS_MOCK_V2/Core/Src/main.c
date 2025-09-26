@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+// Small Change
+
 #include "bno055.h"
 #include "bno055_regs.h"
 #include "mcp9808.h"
