@@ -18,4 +18,4 @@ pinouts bc these are not labeled
 - Sun sensor and thermistor connected through bus
 - 
 
-:(
+:)
