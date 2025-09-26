@@ -8,3 +8,4 @@ to code and debug through there
 
 This repository is practically temporary for now, until we find a permanent solution and learn how to setup.
 
+also dont mind the name from ss_mock_v2 das what adam named it in cube ide
