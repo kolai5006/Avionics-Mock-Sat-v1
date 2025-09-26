@@ -1,0 +1,3 @@
+../Core/Src/motorencoder.c:11:6:Motor_Enc_Init	1
+../Core/Src/motorencoder.c:21:6:Motor_Enc_Start	1
+../Core/Src/motorencoder.c:29:6:Motor_Calc	3

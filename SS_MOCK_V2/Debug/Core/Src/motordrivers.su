@@ -1,0 +1,2 @@
+../Core/Src/motordrivers.c:22:6:init_default_motor	48	static
+../Core/Src/motordrivers.c:55:6:drive_motor	32	static

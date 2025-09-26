@@ -1,0 +1,4 @@
+../Core/Src/MCP9808.c:13:9:MCP_9808_Init	24	static
+../Core/Src/MCP9808.c:60:10:MCP_9808_Read	24	static
+../Core/Src/MCP9808.c:83:19:MCP_9808_RegWrite	32	static
+../Core/Src/MCP9808.c:89:19:MCP_9808_RegRead	32	static
