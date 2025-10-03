@@ -11,7 +11,7 @@ This repository is practically temporary for now, until we find a permanent solu
 also dont mind the name from ss_mock_v2 das what adam named it in cube ide
 
 # todo list (in order of easiest to hardest)
-- test temp sensor on board (have to double check if its connected to bus or not)
+- test temp sensor on board (have to double check if its connected to bus or not) - adrian
 - test bn0055 (drivers already written)
 - i2c mux TCA9548A driver [gotta double check da pinouts]
 - W25Q128 [flash mem] 
