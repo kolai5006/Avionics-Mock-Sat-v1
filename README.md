@@ -25,7 +25,7 @@ also dont mind the name from ss_mock_v2 das what adam named it in cube ide
 - motor encoder drivers 
 - motor drivers
 
-# Avoinics Pinouts In IOC
+# Avionics Pinouts In IOC
 pinouts based off altium schematic
 - i2c1 - Temp Sensor - MCP9808
 - i2c2 - IMU - BN055
