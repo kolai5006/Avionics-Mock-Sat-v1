@@ -1,5 +1,5 @@
 # Avionics-Mock-Sat-v1
-First Repository For CSULB's SharkSat MockSat 
+Repository For CSULB's SharkSat first MockSat 
 
 Disclaimer:
 This is the first repository using github, through cubeide
