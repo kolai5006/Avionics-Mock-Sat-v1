@@ -13,7 +13,7 @@ also dont mind the name from ss_mock_v2 das what adam named it in cube ide
 # todo list (in order of easiest to hardest)
 - test temp sensor on board (have to double check if its connected to bus or not)
 - test bn0055 (drivers already written)
-- i2c mux TCA9548A driver 
+- i2c mux TCA9548A driver [gotta double check da pinouts]
 - W25Q128 [flash mem] 
 - MCP3564RT Drivers and testing [thermocouple ADC] [spi]
 - GPS Drivers and testing [PA1616D] 
