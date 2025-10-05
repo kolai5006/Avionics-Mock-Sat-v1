@@ -2,13 +2,7 @@
 Repository For CSULB's SharkSat first MockSat 
 
 Disclaimer:
-This is the first repository using github, through cubeide
-ideally want to move a away from cube ide, and start using VS Code
-to code and debug through there
-
-This repository is practically temporary for now, until we find a permanent solution and learn how to setup.
-
-also dont mind the name from ss_mock_v2 das what adam named it in cube ide
+dont mind the name from ss_mock_v2 das what adam named it in cube ide
 
 # todo list (in order of easiest to hardest)
 - test temp sensor on board (have to double check if its connected to bus or not) - adrian
