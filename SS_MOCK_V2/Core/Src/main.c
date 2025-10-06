@@ -26,8 +26,10 @@
 #include "bno055.h"
 #include "bno055_regs.h"
 #include "mcp9808.h"
+#include "LTR-329.h"
 #include "motorencoder.h"
 #include "motordrivers.h"
+//testing
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -154,6 +156,8 @@ static Motor X_Motor;
 static Motor Y_Motor;
 static Motor Z_Motor;
 
+LTR_329 TempSensor;
+MCP_9808 SunSensor;
 
 // adrian was here
 /* USER CODE END 0 */
@@ -239,6 +243,8 @@ int main(void)
   Motor_Enc_Init(&motor_x_var);
   Motor_Enc_Init(&motor_y_var);
   Motor_Enc_Init(&motor_z_var);
+
+
 
   //tim 7 is a 10ms interrupt flag
   HAL_TIM_Base_Start_IT(&htim7);

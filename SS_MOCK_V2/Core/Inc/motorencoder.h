@@ -9,6 +9,7 @@
 #include "stm32l4xx_hal_tim.h"
 
 
+
 #define ENCODER_MAX_COUNT 50000
 
 typedef struct{
