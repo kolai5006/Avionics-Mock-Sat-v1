@@ -1,0 +1,5 @@
+../Core/Src/ltr329.c:26:9:LTR_329_Init	5
+../Core/Src/ltr329.c:65:9:LTR_329_Reset	2
+../Core/Src/ltr329.c:81:10:LTR_329_Read	2
+../Core/Src/ltr329.c:110:19:LTR_329_RegWrite	1
+../Core/Src/ltr329.c:116:19:LTR_329_RegRead	1

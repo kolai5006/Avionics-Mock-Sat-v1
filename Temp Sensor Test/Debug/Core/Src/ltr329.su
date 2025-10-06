@@ -1,0 +1,5 @@
+../Core/Src/ltr329.c:26:9:LTR_329_Init	24	static
+../Core/Src/ltr329.c:65:9:LTR_329_Reset	16	static
+../Core/Src/ltr329.c:81:10:LTR_329_Read	24	static
+../Core/Src/ltr329.c:110:19:LTR_329_RegWrite	32	static
+../Core/Src/ltr329.c:116:19:LTR_329_RegRead	32	static

@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000a00c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0001f00e  00000000  00000000  0000a03c  2**0
+ 12 .debug_info   0001f0f6  00000000  00000000  0000a03c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00003951  00000000  00000000  0002904a  2**0
+ 13 .debug_abbrev 00003951  00000000  00000000  00029132  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00001c40  00000000  00000000  0002c9a0  2**3
+ 14 .debug_aranges 00001c40  00000000  00000000  0002ca88  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 0000163a  00000000  00000000  0002e5e0  2**0
+ 15 .debug_rnglists 0000163a  00000000  00000000  0002e6c8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0000472f  00000000  00000000  0002fc1a  2**0
+ 16 .debug_macro  00004738  00000000  00000000  0002fd02  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00021625  00000000  00000000  00034349  2**0
+ 17 .debug_line   00021632  00000000  00000000  0003443a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0011f332  00000000  00000000  0005596e  2**0
+ 18 .debug_str    0011f4eb  00000000  00000000  00055a6c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00174ca0  2**0
+ 19 .comment      00000043  00000000  00000000  00174f57  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00007b14  00000000  00000000  00174ce4  2**2
+ 20 .debug_frame  00007b14  00000000  00000000  00174f9c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000074  00000000  00000000  0017c7f8  2**0
+ 21 .debug_line_str 00000074  00000000  00000000  0017cab0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -938,6 +938,8 @@ int main(void)
   Motor_Enc_Init(&motor_z_var);
  80009a0:	4822      	ldr	r0, [pc, #136]	@ (8000a2c <main+0x190>)
  80009a2:	f001 f88e 	bl	8001ac2 <Motor_Enc_Init>
+
+
 
   //tim 7 is a 10ms interrupt flag
   HAL_TIM_Base_Start_IT(&htim7);
@@ -3811,22 +3813,35 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8001ac0:	bd80      	pop	{r7, pc}
 
 08001ac2 <Motor_Enc_Init>:
+ */
+
+#include "motorencoder.h"
+
+//initializing variables
+void Motor_Enc_Init(motor_var_enc* s){
  8001ac2:	b480      	push	{r7}
  8001ac4:	b083      	sub	sp, #12
  8001ac6:	af00      	add	r7, sp, #0
  8001ac8:	6078      	str	r0, [r7, #4]
+
+	s-> velocity = 0;
  8001aca:	687b      	ldr	r3, [r7, #4]
  8001acc:	f04f 0200 	mov.w	r2, #0
  8001ad0:	601a      	str	r2, [r3, #0]
+	s-> deltacount = 0;
  8001ad2:	687b      	ldr	r3, [r7, #4]
  8001ad4:	2200      	movs	r2, #0
  8001ad6:	605a      	str	r2, [r3, #4]
+	s-> counter = 0;
  8001ad8:	687b      	ldr	r3, [r7, #4]
  8001ada:	2200      	movs	r2, #0
  8001adc:	609a      	str	r2, [r3, #8]
+	s-> previousCounter = 0;
  8001ade:	687b      	ldr	r3, [r7, #4]
  8001ae0:	2200      	movs	r2, #0
  8001ae2:	60da      	str	r2, [r3, #12]
+
+}
  8001ae4:	bf00      	nop
  8001ae6:	370c      	adds	r7, #12
  8001ae8:	46bd      	mov	sp, r7
@@ -3834,29 +3849,44 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8001aee:	4770      	bx	lr
 
 08001af0 <Motor_Enc_Start>:
+
+//
+void Motor_Enc_Start(TIM_HandleTypeDef* htim){
  8001af0:	b580      	push	{r7, lr}
  8001af2:	b082      	sub	sp, #8
  8001af4:	af00      	add	r7, sp, #0
  8001af6:	6078      	str	r0, [r7, #4]
+
+    HAL_TIM_Encoder_Start(htim, TIM_CHANNEL_ALL);
  8001af8:	213c      	movs	r1, #60	@ 0x3c
  8001afa:	6878      	ldr	r0, [r7, #4]
  8001afc:	f005 f855 	bl	8006baa <HAL_TIM_Encoder_Start>
+
+}
  8001b00:	bf00      	nop
  8001b02:	3708      	adds	r7, #8
  8001b04:	46bd      	mov	sp, r7
  8001b06:	bd80      	pop	{r7, pc}
 
 08001b08 <Motor_Calc>:
+
+//short for calculator
+//
+void Motor_Calc(TIM_HandleTypeDef* htim, motor_var_enc* s){
  8001b08:	b480      	push	{r7}
  8001b0a:	b083      	sub	sp, #12
  8001b0c:	af00      	add	r7, sp, #0
  8001b0e:	6078      	str	r0, [r7, #4]
  8001b10:	6039      	str	r1, [r7, #0]
+
+	s->counter = __HAL_TIM_GET_COUNTER(htim);
  8001b12:	687b      	ldr	r3, [r7, #4]
  8001b14:	681b      	ldr	r3, [r3, #0]
  8001b16:	6a5a      	ldr	r2, [r3, #36]	@ 0x24
  8001b18:	683b      	ldr	r3, [r7, #0]
  8001b1a:	609a      	str	r2, [r3, #8]
+
+	s->deltacount = (int32_t)s->counter - (int32_t)s->previousCounter;
  8001b1c:	683b      	ldr	r3, [r7, #0]
  8001b1e:	689b      	ldr	r3, [r3, #8]
  8001b20:	461a      	mov	r2, r3
@@ -3865,11 +3895,15 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8001b26:	1ad2      	subs	r2, r2, r3
  8001b28:	683b      	ldr	r3, [r7, #0]
  8001b2a:	605a      	str	r2, [r3, #4]
+
+
+	if (s->deltacount <= - ENCODER_MAX_COUNT/2){
  8001b2c:	683b      	ldr	r3, [r7, #0]
  8001b2e:	685b      	ldr	r3, [r3, #4]
  8001b30:	4a17      	ldr	r2, [pc, #92]	@ (8001b90 <Motor_Calc+0x88>)
  8001b32:	4293      	cmp	r3, r2
  8001b34:	da07      	bge.n	8001b46 <Motor_Calc+0x3e>
+		s->deltacount += (ENCODER_MAX_COUNT + 1);
  8001b36:	683b      	ldr	r3, [r7, #0]
  8001b38:	685b      	ldr	r3, [r3, #4]
  8001b3a:	f503 4343 	add.w	r3, r3, #49920	@ 0xc300
@@ -3877,17 +3911,25 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8001b40:	683a      	ldr	r2, [r7, #0]
  8001b42:	6053      	str	r3, [r2, #4]
  8001b44:	e00c      	b.n	8001b60 <Motor_Calc+0x58>
+
+
+	}else if (s->deltacount >= ENCODER_MAX_COUNT/2){
  8001b46:	683b      	ldr	r3, [r7, #0]
  8001b48:	685b      	ldr	r3, [r3, #4]
  8001b4a:	f246 12a7 	movw	r2, #24999	@ 0x61a7
  8001b4e:	4293      	cmp	r3, r2
  8001b50:	dd06      	ble.n	8001b60 <Motor_Calc+0x58>
+		s->deltacount -= (ENCODER_MAX_COUNT - 1);
  8001b52:	683b      	ldr	r3, [r7, #0]
  8001b54:	685b      	ldr	r3, [r3, #4]
  8001b56:	f5a3 4343 	sub.w	r3, r3, #49920	@ 0xc300
  8001b5a:	3b4f      	subs	r3, #79	@ 0x4f
  8001b5c:	683a      	ldr	r2, [r7, #0]
  8001b5e:	6053      	str	r3, [r2, #4]
+
+	}
+
+	s->velocity = (float)s->deltacount / 0.01f;
  8001b60:	683b      	ldr	r3, [r7, #0]
  8001b62:	685b      	ldr	r3, [r3, #4]
  8001b64:	ee07 3a90 	vmov	s15, r3
@@ -3896,10 +3938,18 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8001b70:	eec7 7a26 	vdiv.f32	s15, s14, s13
  8001b74:	683b      	ldr	r3, [r7, #0]
  8001b76:	edc3 7a00 	vstr	s15, [r3]
+
+	s->previousCounter = s->counter;
  8001b7a:	683b      	ldr	r3, [r7, #0]
  8001b7c:	689a      	ldr	r2, [r3, #8]
  8001b7e:	683b      	ldr	r3, [r7, #0]
  8001b80:	60da      	str	r2, [r3, #12]
+
+    // Save current counter value for the next calculation
+    previousCounter = counter;*/
+
+
+}
  8001b82:	bf00      	nop
  8001b84:	370c      	adds	r7, #12
  8001b86:	46bd      	mov	sp, r7
