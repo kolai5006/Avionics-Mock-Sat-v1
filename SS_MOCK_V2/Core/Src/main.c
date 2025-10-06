@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-// Matthew was here
+
 
 #include "bno055.h"
 #include "bno055_regs.h"
@@ -29,7 +29,7 @@
 #include "LTR-329.h"
 #include "motorencoder.h"
 #include "motordrivers.h"
-//testing
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
