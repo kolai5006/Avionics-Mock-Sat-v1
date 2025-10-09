@@ -16,15 +16,8 @@ uint8_t MCP_9808_Init(I2C_HandleTypeDef * i2cInstance){
 
 	HAL_StatusTypeDef i2cStatus;
 
-/*	i2cStatus = LTR_329_Reset();
-
-	if (i2cStatus != HAL_OK){
-
-		return 1;
-	}*/
-
 	//check device ID
-
+	//should return 0x0054
 	uint16_t deviceID = 0x00;
 
 	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_MANUF_ID, &deviceID);
@@ -39,31 +32,14 @@ uint8_t MCP_9808_Init(I2C_HandleTypeDef * i2cInstance){
 }
 
 
-/*
-uint8_t MCP_9808_Reset(){
-
-	HAL_StatusTypeDef i2cStatus;
-
-	i2cStatus = MCP_9808_RegWrite(LTR_329_ALS_CONTR, 0x20);
-
-	if (i2cStatus != HAL_OK){
-
-		return 1;
-	}
-	HAL_Delay(25);
-
-	return 0;
-}
-*/
-
-
+//reads temperature
 uint16_t MCP_9808_Read(MCP_9808 * TempSensor){
 
 	HAL_StatusTypeDef i2cStatus;
 
 	//Writes 16bit data
-	uint16_t UpperTemp = 0x00;
-	uint16_t LowerTemp = 0x00;
+	uint8_t UpperTemp = 0x00;
+	uint8_t LowerTemp = 0x00;
 
 	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_UPPER_TEMP,&UpperTemp);
 	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_LOWER_TEMP, &LowerTemp);
@@ -76,6 +52,7 @@ uint16_t MCP_9808_Read(MCP_9808 * TempSensor){
 	TempSensor->UPPER_TEMP = (UpperTemp);
 	TempSensor->LOWER_TEMP = (LowerTemp);
 
+	//returns 0 if no error
 	return 0;
 
 }

@@ -156,8 +156,8 @@ static Motor X_Motor;
 static Motor Y_Motor;
 static Motor Z_Motor;
 
-LTR_329 TempSensor;
-MCP_9808 SunSensor;
+LTR_329 SunSensor;
+MCP_9808 TempSensor;
 
 // adrian was here
 /* USER CODE END 0 */
@@ -263,7 +263,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+  
 	HAL_GPIO_WritePin(MCU_LED_GPIO_Port, MCU_LED_Pin, SET);
 	HAL_Delay(1000);
 	HAL_GPIO_WritePin(MCU_LED_GPIO_Port, MCU_LED_Pin, RESET);
