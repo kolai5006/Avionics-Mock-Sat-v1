@@ -40,10 +40,10 @@ void init_pid (PID_VARIABLES * pid, float kp, float ki, float kd, float min_outp
 	pid->min_output = min_output;
     pid->max_output = max_output;
 
-    pid->prev_error = 0.0;
-
+    pid->previous_error= 0.0;
 
 }
+
 
 
 

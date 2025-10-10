@@ -1,14 +1,16 @@
 /*
  * mcp9808.c
  *
- *  Created on: Aug 29, 2025
+ *  Created on: Oct 8, 2025
  *      Author: nicho
  */
+
 #include "mcp9808.h"
 #include "stm32l4xx.h"
 
 
 static I2C_HandleTypeDef * MCP_9808_I2C_HANDLE;
+
 
 uint8_t MCP_9808_Init(I2C_HandleTypeDef * i2cInstance){
 
@@ -16,20 +18,11 @@ uint8_t MCP_9808_Init(I2C_HandleTypeDef * i2cInstance){
 
 	HAL_StatusTypeDef i2cStatus;
 
-/*	i2cStatus = LTR_329_Reset();
+	uint16_t deviceID = 0x0000;
 
-	if (i2cStatus != HAL_OK){
+	i2cStatus = MCP_9808_RegRead16(MCP_9808_REG_MANUF_ID, &deviceID);  // use 16-bit read
 
-		return 1;
-	}*/
-
-	//check device ID
-
-	uint16_t deviceID = 0x00;
-
-	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_MANUF_ID, &deviceID);
-
-	if ((i2cStatus != HAL_OK) || ((deviceID)!= 0x0054)){
+	if ((i2cStatus != HAL_OK) || (deviceID != 0x0054)){
 
 		return 2;
 	}
@@ -39,55 +32,99 @@ uint8_t MCP_9808_Init(I2C_HandleTypeDef * i2cInstance){
 }
 
 
-/*
-uint8_t MCP_9808_Reset(){
+//calc(short for calculator) temperature in celsius, then computes in fahrenheit
+float MCP_9808_CalcTemp(MCP_9808 * TempSensor){
+
+	uint16_t rawTemp = TempSensor->rawTemp;
+
+	// clear alert flags (upper 3 bits)
+	rawTemp = rawTemp & 0x1FFF;
+
+	float temperature = 0.0;
+	float farenheit = 0.0;
+
+	// check if temperature is negative (bit 12 is set)
+	if (rawTemp & 0x1000){
+
+		// negative temperature
+		rawTemp = rawTemp & 0x0FFF;  // clear sign bit
+		temperature = 256.0 - (rawTemp * 0.0625);
+
+	} else {
+
+		// positive temperature
+		temperature = rawTemp * 0.0625;
+	}
+
+	TempSensor->temperatureC = temperature;
+
+	farenheit = (temperature * 1.8) + 32;
+	TempSensor->temperatureF = farenheit;
+
+
+	return temperature;
+}
+
+//read temp
+uint8_t MCP_9808_ReadTemp(MCP_9808 * TempSensor){
 
 	HAL_StatusTypeDef i2cStatus;
 
-	i2cStatus = MCP_9808_RegWrite(LTR_329_ALS_CONTR, 0x20);
+	uint16_t ambientTemp = 0x0000;
+
+	i2cStatus = MCP_9808_RegRead16(MCP_9808_REG_AMBIENT_TEMP, &ambientTemp);
 
 	if (i2cStatus != HAL_OK){
 
 		return 1;
 	}
-	HAL_Delay(25);
+
+	TempSensor->rawTemp = ambientTemp;
+
+	// automatically calc(short for calculator) temperature
+	MCP_9808_CalcTemp(TempSensor);
 
 	return 0;
+
 }
-*/
 
+//write 16-bit
+HAL_StatusTypeDef MCP_9808_RegWrite16(uint8_t regAddr, uint16_t regData){
 
-uint16_t MCP_9808_Read(MCP_9808 * TempSensor){
+	uint8_t buffer[2];
 
-	HAL_StatusTypeDef i2cStatus;
+	buffer[0] = (regData >> 8) & 0xFF;  // upper byte
+	buffer[1] = regData & 0xFF;          // lower byte
 
-	//Writes 16bit data
-	uint16_t UpperTemp = 0x00;
-	uint16_t LowerTemp = 0x00;
+	return HAL_I2C_Mem_Write(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, buffer, 2, HAL_MAX_DELAY);
+}
 
-	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_UPPER_TEMP,&UpperTemp);
-	i2cStatus =  MCP_9808_RegRead(MCP_9808_REG_LOWER_TEMP, &LowerTemp);
+//read 16-bit
+HAL_StatusTypeDef MCP_9808_RegRead16(uint8_t regAddr, uint16_t* regData){
 
-	if (i2cStatus != HAL_OK){
+	uint8_t buffer[2];
 
-		return 1;
+	HAL_StatusTypeDef status;
+
+	status = HAL_I2C_Mem_Read(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, buffer, 2, HAL_MAX_DELAY);
+
+	if (status == HAL_OK){
+
+		*regData = (buffer[0] << 8) | buffer[1];  // combine bytes
 	}
 
-	TempSensor->UPPER_TEMP = (UpperTemp);
-	TempSensor->LOWER_TEMP = (LowerTemp);
-
-	return 0;
-
+	return status;
 }
-//write
-HAL_StatusTypeDef MCP_9808_RegWrite(uint16_t regAddr, uint16_t regData){
 
-	return HAL_I2C_Mem_Write(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, &regData, 2, HAL_MAX_DELAY);
+//write 8-bit
+HAL_StatusTypeDef MCP_9808_RegWrite(uint8_t regAddr, uint8_t regData){
+
+	return HAL_I2C_Mem_Write(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, &regData, 1, HAL_MAX_DELAY);
 }
-//read //fix the I2c HANDLE
 
-HAL_StatusTypeDef MCP_9808_RegRead(uint16_t regAddr, uint16_t* regData){
+//read 8-bit
+HAL_StatusTypeDef MCP_9808_RegRead(uint8_t regAddr, uint8_t* regData){
 
-	return HAL_I2C_Mem_Read(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, regData, 2, HAL_MAX_DELAY);
+	return HAL_I2C_Mem_Read(MCP_9808_I2C_HANDLE, MCP_9808_I2CADDR_DEFAULT, regAddr, I2C_MEMADD_SIZE_8BIT, regData, 1, HAL_MAX_DELAY);
 
 }
