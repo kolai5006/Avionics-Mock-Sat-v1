@@ -48,6 +48,6 @@ uint8_t LTR_329_Init(I2C_HandleTypeDef * i2cInstance); // run once on start up
 uint8_t LTR_329_Reset(); // reset funtion
 
 uint8_t LTR_329_Read_Data(LTR_329 *SunSensor); // function to read data
-
+//Hi it's Dan and Ayleen and William
 
 
