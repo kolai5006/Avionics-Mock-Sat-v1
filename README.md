@@ -22,7 +22,7 @@ dont mind the name from ss_mock_v2 das what adam named it in cube ide
 
 # Avionics Pinouts In IOC
 pinouts based off altium schematic
-- hc05 - pd8, pd9
+- hc05 - pd8  rx, pd9 tx
 - i2c1 - Temp Sensor - MCP9808
 - i2c2 - IMU - BN055
 - :)
