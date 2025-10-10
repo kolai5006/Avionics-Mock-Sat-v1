@@ -244,12 +244,17 @@ int main(void)
   Motor_Enc_Init(&motor_y_var);
   Motor_Enc_Init(&motor_z_var);
 
-
-
   //tim 7 is a 10ms interrupt flag
   HAL_TIM_Base_Start_IT(&htim7);
 
+  //tempsensor init
+  //check if this is the correct i2c for it
+  uint8_t TempInitStatus = MCP_9808_Init(&hi2c1);
 
+  if (TempInitStatus != 0){
+      // Sensor initialization failed
+      Error_Handler();
+  }
 
   //starts the pwm
   //HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1);
@@ -264,19 +269,16 @@ int main(void)
   while (1)
   {
   
-	HAL_GPIO_WritePin(MCU_LED_GPIO_Port, MCU_LED_Pin, SET);
+	HAL_GPIO_TogglePin(MCU_LED_GPIO_Port, MCU_LED_Pin);
+	MCP_9808_ReadTemp(&TempSensor);
 	HAL_Delay(1000);
-	HAL_GPIO_WritePin(MCU_LED_GPIO_Port, MCU_LED_Pin, RESET);
-	HAL_Delay(1000);
-
-
 /*
-	turns on motor
-	__HAL_TIM_SET_COMPARE(&htim15,TIM_CHANNEL_1,1);*/
+	//driving motor
 
 	drive_motor(&X_Motor, 1);
 	drive_motor(&Y_Motor, 0.5);
 	drive_motor(&Z_Motor, 0.25);
+*/
 
 
 

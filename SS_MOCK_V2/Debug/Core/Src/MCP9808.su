@@ -1,4 +1,7 @@
-../Core/Src/MCP9808.c:13:9:MCP_9808_Init	24	static
-../Core/Src/MCP9808.c:36:10:MCP_9808_Read	24	static
-../Core/Src/MCP9808.c:60:19:MCP_9808_RegWrite	32	static
-../Core/Src/MCP9808.c:66:19:MCP_9808_RegRead	32	static
+../Core/Src/MCP9808.c:15:9:MCP_9808_Init	24	static
+../Core/Src/MCP9808.c:36:7:MCP_9808_CalcTemp	32	static
+../Core/Src/MCP9808.c:69:9:MCP_9808_ReadTemp	24	static
+../Core/Src/MCP9808.c:92:19:MCP_9808_RegWrite16	40	static
+../Core/Src/MCP9808.c:103:19:MCP_9808_RegRead16	40	static
+../Core/Src/MCP9808.c:120:19:MCP_9808_RegWrite	32	static
+../Core/Src/MCP9808.c:126:19:MCP_9808_RegRead	32	static
