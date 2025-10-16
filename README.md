@@ -6,7 +6,6 @@ dont mind the name from ss_mock_v2 das what adam named it in cube ide
 
 # todo list (in order of easiest to hardest)
 - test sun sensor on mock - (have to double check if its connected to i2c mux or not)
-- test temp sensor on mock  - adrian
 - test bn0055 on mock (drivers already written)
 - i2c mux TCA9548A driver [gotta double check da pinouts]
 - W25Q128 [flash mem] [spi]
@@ -17,8 +16,9 @@ dont mind the name from ss_mock_v2 das what adam named it in cube ide
 # whats finished
 - sunsensor driver [i2c]
 - bno055 drivers [uart]
-- motor encoder drivers 
-- motor drivers
+- motor encoder drivers and testing
+- motor drivers and testing 
+- temp sensor drivers and testing [i2c]
 
 # Avionics Pinouts In IOC
 pinouts based off altium schematic
