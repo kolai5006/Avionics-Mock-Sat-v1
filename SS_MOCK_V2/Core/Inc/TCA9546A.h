@@ -28,7 +28,7 @@ typedef enum
     TCA9546A_SUCCESS = 0U,      // everything works
     TCA9546A_NOT_DETECTED = 1U, // cant find device
     TCA9546A_ERROR = 2U         // generic error
-} TCA9546A_ERROR;
+} TCA9546A_StatusTypeDef;
 
 /* Channel Definitions */
 typedef enum
@@ -65,50 +65,50 @@ void TCA9546A_HW_Reset_Mount(GPIO_TypeDef *GPIO_Port, uint16_t GPIO_Pin);
  * @param a2 State of A2 pin (0 or 1)
  * @param a1 State of A1 pin (0 or 1)
  * @param a0 State of A0 pin (0 or 1)
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0);
+TCA9546A_StatusTypeDef TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0);
 
 /**
  * @brief Select one or multiple channels
  * @param channels Channel(s) to enable (bitwise OR)
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Select_Channels(uint8_t channels);
+TCA9546A_StatusTypeDef TCA9546A_Select_Channels(uint8_t channels);
 
 /**
  * @brief Enable single channel (disables others)
  * @param channel Channel to enable
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel);
+TCA9546A_StatusTypeDef TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel);
 
 /**
  * @brief Disable all channels
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Disable_All_Channels(void);
+TCA9546A_StatusTypeDef TCA9546A_Disable_All_Channels(void);
 
 /**
  * @brief Add channel(s) to current selection
  * @param channels Channel(s) to add
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Add_Channels(uint8_t channels);
+TCA9546A_StatusTypeDef TCA9546A_Add_Channels(uint8_t channels);
 
 /**
  * @brief Remove channel(s) from current selection
  * @param channels Channel(s) to remove
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Remove_Channels(uint8_t channels);
+TCA9546A_StatusTypeDef TCA9546A_Remove_Channels(uint8_t channels);
 
 /**
  * @brief Read current channel selection
  * @param channels Pointer to store channel data
- * @return TCA9546A_ERROR status
+ * @return TCA9546A_StatusTypeDef status
  */
-TCA9546A_ERROR TCA9546A_Get_Channels(uint8_t *channels);
+TCA9546A_StatusTypeDef TCA9546A_Get_Channels(uint8_t *channels);
 
 /**
  * @brief Check if device is present
