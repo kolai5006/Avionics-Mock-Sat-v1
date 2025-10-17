@@ -1,8 +1,8 @@
 # ===========================
-# STM32CubeIDE Git Ignore (for project in SS_MOCK_V2/)
+# STM32CubeIDE Git Ignore (project in SS_MOCK_V2/)
 # ===========================
 
-# STM32CubeIDE / Eclipse metadata
+# IDE metadata
 SS_MOCK_V2/.metadata/
 SS_MOCK_V2/.settings/
 SS_MOCK_V2/.loadpath
@@ -11,7 +11,7 @@ SS_MOCK_V2/.mxproject
 SS_MOCK_V2/.vscode/
 SS_MOCK_V2/*.launch
 
-# Build directories and outputs
+# Build directories
 SS_MOCK_V2/Debug/
 SS_MOCK_V2/Release/
 SS_MOCK_V2/build/
@@ -27,13 +27,13 @@ SS_MOCK_V2/*.map
 SS_MOCK_V2/*.lst
 SS_MOCK_V2/*.axf
 
-# Auto-generated Makefiles
+# Auto-generated Makefiles (root + nested)
 SS_MOCK_V2/Makefile
 SS_MOCK_V2/**/Makefile
 SS_MOCK_V2/**/makefile
 SS_MOCK_V2/**/*.mk
 
-# Temporary / backup files
+# Temp / backup
 *.bak
 *.tmp
 *~
@@ -42,13 +42,11 @@ SS_MOCK_V2/**/*.mk
 # Logs
 *.log
 
-# OS / editor files
+# OS/editor junk
 .DS_Store
 Thumbs.db
 
-# ===========================
-# Keep these tracked in Git
-# ===========================
+# Keep these tracked
 !SS_MOCK_V2/Core/
 !SS_MOCK_V2/Drivers/
 !SS_MOCK_V2/Middlewares/
