@@ -1,0 +1,59 @@
+# ===========================
+# STM32CubeIDE Git Ignore
+# ===========================
+
+# CubeIDE / Eclipse project metadata
+.metadata/
+.settings/
+.loadpath
+.buildpath
+.project
+.cproject
+
+# Build directories and output files
+Debug/
+Release/
+build/
+out/
+*.o
+*.d
+*.su
+*.elf
+*.map
+*.bin
+*.hex
+*.list
+*.lst
+*.srec
+*.axf
+
+# Temporary or backup files
+*.bak
+*.tmp
+*~
+*.swp
+
+# Logs
+*.log
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Keep these tracked in Git:
+# - Core/           → your source and headers
+# - Drivers/        → HAL, BSP, and your own drivers
+# - Middlewares/    → (e.g. FreeRTOS, USB, FatFs) - track when added
+# - USB_DEVICE/     → USB stack configuration
+# - FATFS/          → File system
+# - *.ioc           → CubeMX configuration file
+# ===========================
+
+# Explicitly keep important source/config folders
+!Core/
+!Drivers/
+!Middlewares/
+!USB_DEVICE/
+!FATFS/
+!*.ioc
