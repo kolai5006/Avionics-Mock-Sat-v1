@@ -1,33 +1,39 @@
 # ===========================
-# STM32CubeIDE Git Ignore
+# STM32CubeIDE Git Ignore (for project in SS_MOCK_V2/)
 # ===========================
 
-# CubeIDE / Eclipse project metadata
-.metadata/
-.settings/
-.loadpath
-.buildpath
-.project
-.cproject
+# STM32CubeIDE / Eclipse metadata
+SS_MOCK_V2/.metadata/
+SS_MOCK_V2/.settings/
+SS_MOCK_V2/.loadpath
+SS_MOCK_V2/.buildpath
+SS_MOCK_V2/.mxproject
+SS_MOCK_V2/.vscode/
+SS_MOCK_V2/*.launch
 
-# Build directories and output files
-Debug/
-Release/
-build/
-out/
-*.o
-*.d
-*.su
-*.elf
-*.map
-*.bin
-*.hex
-*.list
-*.lst
-*.srec
-*.axf
+# Build directories and outputs
+SS_MOCK_V2/Debug/
+SS_MOCK_V2/Release/
+SS_MOCK_V2/build/
+SS_MOCK_V2/out/
 
-# Temporary or backup files
+# Build artifacts
+SS_MOCK_V2/*.o
+SS_MOCK_V2/*.d
+SS_MOCK_V2/*.elf
+SS_MOCK_V2/*.bin
+SS_MOCK_V2/*.hex
+SS_MOCK_V2/*.map
+SS_MOCK_V2/*.lst
+SS_MOCK_V2/*.axf
+
+# Auto-generated Makefiles
+SS_MOCK_V2/Makefile
+SS_MOCK_V2/**/Makefile
+SS_MOCK_V2/**/makefile
+SS_MOCK_V2/**/*.mk
+
+# Temporary / backup files
 *.bak
 *.tmp
 *~
@@ -41,19 +47,11 @@ out/
 Thumbs.db
 
 # ===========================
-# Keep these tracked in Git:
-# - Core/           → your source and headers
-# - Drivers/        → HAL, BSP, and your own drivers
-# - Middlewares/    → (e.g. FreeRTOS, USB, FatFs) - track when added
-# - USB_DEVICE/     → USB stack configuration
-# - FATFS/          → File system
-# - *.ioc           → CubeMX configuration file
+# Keep these tracked in Git
 # ===========================
-
-# Explicitly keep important source/config folders
-!Core/
-!Drivers/
-!Middlewares/
-!USB_DEVICE/
-!FATFS/
-!*.ioc
+!SS_MOCK_V2/Core/
+!SS_MOCK_V2/Drivers/
+!SS_MOCK_V2/Middlewares/
+!SS_MOCK_V2/USB_DEVICE/
+!SS_MOCK_V2/FATFS/
+!SS_MOCK_V2/*.ioc
