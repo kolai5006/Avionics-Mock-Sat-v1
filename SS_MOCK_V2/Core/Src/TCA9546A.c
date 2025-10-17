@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
- * @file    tca9548a.c
- * @brief   TCA9548A I2C Switch Driver Implementation
+ * @file    TCA9546A.c
+ * @brief   TCA9546A I2C Switch Driver Implementation
  ******************************************************************************
  *
  * will finnish this documentation section later
@@ -10,93 +10,93 @@
  ******************************************************************************
  */
 
-#include "tca9548a.h"
+#include "tca9546a.h"
 
 /* PRIVATE DEFINES */
 /* Constants used internally by the driver */
 
-/* TCA9548A base I2C address
+/* TCA9546A base I2C address
  * The actual address is 0x70 to 0x77 depending on A0, A1, A2 pins */
-#define TCA9548A_BASE_ADDR 0x70U
+#define TCA9546A_BASE_ADDR 0x70U
 
 /* How long to wait for I2C operations (milliseconds)
  * If I2C takes longer than this, we give up and return an error
  * Can remove later if you want me to or add more time */
-#define TCA9548A_WRITE_TIMEOUT 100U /* 100ms to send data */
-#define TCA9548A_READ_TIMEOUT 100U  /* 100ms to receive data */
+#define TCA9546A_WRITE_TIMEOUT 100U /* 100ms to send data */
+#define TCA9546A_READ_TIMEOUT 100U  /* 100ms to receive data */
 
 /* GLOBAL VARIABLES */
 
 /* Pointer to the I2C peripheral we're using
- * This gets set when you call TCA9548A_I2C_Mount()
+ * This gets set when you call TCA9546A_I2C_Mount()
  * (basically a phone line to the mux :p) */
-I2C_HandleTypeDef *TCA9548A_I2C;
+I2C_HandleTypeDef *TCA9546A_I2C;
 
 /* State Structure
  * (driver's "memory") */
 typedef struct
 {
-    uint8_t device_address;   /* I2C address of the TCA9548A (0x70-0x77) */
-    uint8_t current_channels; /* Which channels are currently open (8 bits, each = 1 channel) */
-} TCA9548A_STATE;
+    uint8_t device_address;   /* I2C address of the TCA9546A (0x70-0x77) */
+    uint8_t current_channels; /* Which channels are currently open (4 channels, bits 0-3) */
+} TCA9546A_STATE;
 
 /* Create one instance of the state structure */
-TCA9548A_STATE state;
+TCA9546A_STATE TCA9546A_state;
 
-/* #ifdef TCA9548A_HARDWARE_RESET
+#ifdef TCA9546A_HARDWARE_RESET
 /* Optional: GPIO pin for hardware reset
- * uncommented TCA9548A_HARDWARE_RESET in the .h file if you want to use this!!!!
+ * uncommented TCA9546A_HARDWARE_RESET in the .h file if you want to use this!!!! */
 GPIO_TypeDef *Reset_Port = NULL; // Which GPIO port (GPIOA, GPIOB, etc.)
 uint16_t Reset_Pin = 0;          // Which pin number
-#endif */
+#endif
 
 /* PRIVATE FUNCTION PROTOTYPES */
 /* These functions are only used inside this file */
 
-static inline HAL_StatusTypeDef TCA9548A_Write(uint8_t data);
-static inline HAL_StatusTypeDef TCA9548A_Read(uint8_t *buf);
-static inline void TCA9548A_ERROR_HANDLE(HAL_StatusTypeDef status);
+static inline HAL_StatusTypeDef TCA9546A_Write(uint8_t data);
+static inline HAL_StatusTypeDef TCA9546A_Read(uint8_t *buf);
+static inline void TCA9546A_ERROR_HANDLE(HAL_StatusTypeDef status);
 
 /* PRIVATE FUNCTION IMPLEMENTATIONS */
 
 /**
- * @brief Write one byte to the TCA9548A
+ * @brief Write one byte to the TCA9546A
  *
  * HOW IT WORKS:
- *   This function sends a single byte over I2C to the TCA9548A.
+ *   This function sends a single byte over I2C to the TCA9546A.
  *   That byte controls which channels are open/closed.
  *
  * THE BYTE:
  *   Each bit in the byte represents a channel:
- *   Bit 0 = Channel 0, Bit 1 = Channel 1, ... Bit 7 = Channel 7
+ *   Bit 0 = Channel 0, Bit 1 = Channel 1, ...
  *   If bit is 1 = channel is ON
  *   If bit is 0 = channel is OFF
  *
  * WHAT HAPPENS:
  *   1. HAL_I2C_Master_Transmit sends the byte over I2C
- *   2. TCA9548A receives it and flips its internal switches
+ *   2. TCA9546A receives it and flips its internal switches
  *   3. Function returns status if it worked or not
  *
  * @param data The byte to send (controls which channels to open)
  * @return HAL_OK if successful, HAL_ERROR/HAL_TIMEOUT if failed
  */
-static inline HAL_StatusTypeDef TCA9548A_Write(uint8_t data)
+static inline HAL_StatusTypeDef TCA9546A_Write(uint8_t data)
 {
 
     HAL_StatusTypeDef status; /* Will store the result: HAL_OK or HAL_ERROR */
 
     /* will fill in later but if confused lmk */
-    status = HAL_I2C_Master_Transmit(TCA9548A_I2C,
-                                     state.device_address << 1,
+    status = HAL_I2C_Master_Transmit(TCA9546A_I2C,
+                                     TCA9546A_state.device_address << 1,
                                      &data,
                                      1,
-                                     TCA9548A_WRITE_TIMEOUT);
+                                     TCA9546A_WRITE_TIMEOUT);
 
     return status;
 }
 
 /**
- * @brief Read one byte from the TCA9548A
+ * @brief Read one byte from the TCA9546A
  *
  * HOW IT WORKS:
  *   Will see which channels are avaibklable
@@ -109,17 +109,17 @@ static inline HAL_StatusTypeDef TCA9548A_Write(uint8_t data)
  * @param buf Pointer to where the received byte should be stored
  * @return HAL_OK if successful, HAL_ERROR/HAL_TIMEOUT if failed
  */
-static inline HAL_StatusTypeDef TCA9548A_Read(uint8_t *buf)
+static inline HAL_StatusTypeDef TCA9546A_Read(uint8_t *buf)
 {
 
     HAL_StatusTypeDef status;
 
     /* will fill */
-    status = HAL_I2C_Master_Receive(TCA9548A_I2C,
-                                    state.device_address << 1,
+    status = HAL_I2C_Master_Receive(TCA9546A_I2C,
+                                    TCA9546A_state.device_address << 1,
                                     buf,
                                     1,
-                                    TCA9548A_READ_TIMEOUT);
+                                    TCA9546A_READ_TIMEOUT);
 
     return status;
 }
@@ -140,7 +140,7 @@ static inline HAL_StatusTypeDef TCA9548A_Read(uint8_t *buf)
  *
  * @param status The status code to check (from HAL function)
  */
-static inline void TCA9548A_ERROR_HANDLE(HAL_StatusTypeDef status)
+static inline void TCA9546A_ERROR_HANDLE(HAL_StatusTypeDef status)
 {
 
     /* If status is NOT HAL_OK, something went wrong */
@@ -155,7 +155,7 @@ static inline void TCA9548A_ERROR_HANDLE(HAL_StatusTypeDef status)
         while (1)
         {
             /* IF STUCK: Check: (chatgpt generated so if none works blame chat)
-             *      Is TCA9548A powered?
+             *      Is TCA9546A powered?
              *      Are SDA and SCL connected?
              *      Are pull-up resistors present?
              *      Is the I2C address correct?
@@ -175,28 +175,28 @@ static inline void TCA9548A_ERROR_HANDLE(HAL_StatusTypeDef status)
  *
  * WHAT IT DOES:
  *   Saves a pointer to your I2C handle so all the other functions
- *   know which I2C bus to use when talking to the TCA9548A.
+ *   know which I2C bus to use when talking to the TCA9546A.
  *
- * NOTE: Call this first before calling any other TCA9548A functions
+ * NOTE: Call this first before calling any other TCA9546A functions
  *
  * SO FOR EXAMPLE:
- *   TCA9548A_I2C_Mount(&hi2c1);  // Use I2C1
+ *   TCA9546A_I2C_Mount(&hi2c1);  // Use I2C1
  */
-void TCA9548A_I2C_Mount(I2C_HandleTypeDef *i2c)
+void TCA9546A_I2C_Mount(I2C_HandleTypeDef *i2c)
 {
     /* Store the pointer to the I2C handle
-     * Now all other functions can use "TCA9548A_I2C" to talk to the device */
-    TCA9548A_I2C = i2c;
+     * Now all other functions can use "TCA9546A_I2C" to talk to the device */
+    TCA9546A_I2C = i2c;
 }
 
-#ifdef TCA9548A_HARDWARE_RESET
+#ifdef TCA9546A_HARDWARE_RESET
 /**
  * @brief Tell the driver which GPIO pin is connected to RESET
 
  * EXAMPLE:
- *   TCA9548A_HW_Reset_Mount(GPIOA, GPIO_PIN_8);  // Reset on PA8
+ *   TCA9546A_HW_Reset_Mount(GPIOA, GPIO_PIN_8);  // Reset on PA8
  */
-void TCA9548A_HW_Reset_Mount(GPIO_TypeDef *GPIO_Port, uint16_t GPIO_Pin)
+void TCA9546A_HW_Reset_Mount(GPIO_TypeDef *GPIO_Port, uint16_t GPIO_Pin)
 {
     /* Save which port and pin to use */
     Reset_Port = GPIO_Port;
@@ -205,18 +205,18 @@ void TCA9548A_HW_Reset_Mount(GPIO_TypeDef *GPIO_Port, uint16_t GPIO_Pin)
 #endif
 
 /**
- * @brief Initialize the TCA9548A and prepare it for use
+ * @brief Initialize the TCA9546A and prepare it for use
  */
-TCA9548A_ERROR TCA9548A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
+TCA9546A_ERROR TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
 {
 
     HAL_StatusTypeDef status;
 
     /* Can show Calulation explanation later if needed */
-    state.device_address = TCA9548A_BASE_ADDR |
-                           ((a2 & 0x01) << 2) |
-                           ((a1 & 0x01) << 1) |
-                           (a0 & 0x01);
+    TCA9546A_state.device_address = TCA9546A_BASE_ADDR |
+                                    ((a2 & 0x01) << 2) |
+                                    ((a1 & 0x01) << 1) |
+                                    (a0 & 0x01);
 
     HAL_Delay(10);
 
@@ -225,18 +225,18 @@ TCA9548A_ERROR TCA9548A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
      * HAL_OK: Device responded
      * HAL_ERROR/HAL_TIMEOUT: No response
      */
-    status = HAL_I2C_IsDeviceReady(TCA9548A_I2C,
-                                   state.device_address << 1,
+    status = HAL_I2C_IsDeviceReady(TCA9546A_I2C,
+                                   TCA9546A_state.device_address << 1,
                                    3,
-                                   TCA9548A_WRITE_TIMEOUT);
+                                   TCA9546A_WRITE_TIMEOUT);
 
     /* If device didn't respond, return error */
     if (status != HAL_OK)
     {
-        return TCA9548A_NOT_DETECTED; /* Gotta check ur wiring */
+        return TCA9546A_NOT_DETECTED; /* Gotta check ur wiring */
     }
 
-#ifdef TCA9548A_HARDWARE_RESET
+#ifdef TCA9546A_HARDWARE_RESET
     /* Optional hardware reset on/off */
     if (Reset_Port != NULL)
     {                                                             /* Only if reset pin was configured */
@@ -248,113 +248,113 @@ TCA9548A_ERROR TCA9548A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
 #endif
 
     /* Turn off all channels (clean starting point) */
-    status = TCA9548A_Write(TCA9548A_NO_CHANNEL); /* Send 0x00 */
-    TCA9548A_ERROR_HANDLE(status);                /* Stop if it failed */
+    status = TCA9546A_Write(TCA9546A_NO_CHANNEL); /* Send 0x00 */
+    TCA9546A_ERROR_HANDLE(status);                /* Stop if it failed */
 
     /* channels are now closed */
-    state.current_channels = TCA9548A_NO_CHANNEL;
+    TCA9546A_state.current_channels = TCA9546A_NO_CHANNEL;
 
     /* ready to use again */
-    return TCA9548A_SUCCESS;
+    return TCA9546A_SUCCESS;
 }
 
 /**
  * @brief Select which channels should be open
  *
  * @param channels Byte where each bit controls one channel
- * @return TCA9548A_SUCCESS if successful
+ * @return TCA9546A_SUCCESS if successful
  */
-TCA9548A_ERROR TCA9548A_Select_Channels(uint8_t channels)
+TCA9546A_ERROR TCA9546A_Select_Channels(uint8_t channels)
 {
 
     HAL_StatusTypeDef status;
 
-    /* Send the channel selection byte to TCA9548A over I2C */
-    status = TCA9548A_Write(channels);
-    TCA9548A_ERROR_HANDLE(status); /* Stop if it failed */
+    /* Send the channel selection byte to TCA9546A over I2C */
+    status = TCA9546A_Write(channels);
+    TCA9546A_ERROR_HANDLE(status); /* Stop if it failed */
 
     /* Remember which channels we just opened*/
-    state.current_channels = channels;
+    TCA9546A_state.current_channels = channels;
 
     HAL_Delay(1);
 
-    return TCA9548A_SUCCESS;
+    return TCA9546A_SUCCESS;
 }
 
 /**
  * @brief Enable a single channel (closes all others)
  *
- * @param channel Which channel to enable (0-7)
- * @return TCA9548A_SUCCESS if successful
+ * @param channel Which channel to enable (0-3)
+ * @return TCA9546A_SUCCESS if successful
  */
-TCA9548A_ERROR TCA9548A_Enable_Channel(TCA9548A_CHANNEL channel)
+TCA9546A_ERROR TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel)
 {
     /* Just call Select_Channels with this one channel */
-    return TCA9548A_Select_Channels((uint8_t)channel);
+    return TCA9546A_Select_Channels((uint8_t)channel);
 }
 
 /**
  * @brief Close all channels
  *
- * @return TCA9548A_SUCCESS if successful
+ * @return TCA9546A_SUCCESS if successful
  */
-TCA9548A_ERROR TCA9548A_Disable_All_Channels(void)
+TCA9546A_ERROR TCA9546A_Disable_All_Channels(void)
 {
     /* Send 0x00 (all bits = 0) to close all channels */
-    return TCA9548A_Select_Channels(TCA9548A_NO_CHANNEL);
+    return TCA9546A_Select_Channels(TCA9546A_NO_CHANNEL);
 }
 
 /**
  * @brief Add channel(s) to the current selection
  *
  * @param channels Channel(s) to add
- * @return TCA9548A_SUCCESS if successful
+ * @return TCA9546A_SUCCESS if successful
  */
-TCA9548A_ERROR TCA9548A_Add_Channels(uint8_t channels)
+TCA9546A_ERROR TCA9546A_Add_Channels(uint8_t channels)
 {
     /* bitwise OR to combine current channels with new ones */
-    uint8_t new_channels = state.current_channels | channels;
+    uint8_t new_channels = TCA9546A_state.current_channels | channels;
 
-    return TCA9548A_Select_Channels(new_channels);
+    return TCA9546A_Select_Channels(new_channels);
 }
 
 /**
  * @brief Remove channel(s) from the current selection
  *
  * @param channels Channel(s) to remove
- * @return TCA9548A_SUCCESS if successful
+ * @return TCA9546A_SUCCESS if successful
  */
-TCA9548A_ERROR TCA9548A_Remove_Channels(uint8_t channels)
+TCA9546A_ERROR TCA9546A_Remove_Channels(uint8_t channels)
 {
     /* bitwise AND with NOT to remove specific channels */
-    uint8_t new_channels = state.current_channels & ~channels;
+    uint8_t new_channels = TCA9546A_state.current_channels & ~channels;
 
-    return TCA9548A_Select_Channels(new_channels);
+    return TCA9546A_Select_Channels(new_channels);
 }
 
 /**
  * @brief Read which channels are currently active
  *
  * @param channels Pointer to variable where result will be stored
- * @return TCA9548A_SUCCESS if read was successful
+ * @return TCA9546A_SUCCESS if read was successful
  */
-TCA9548A_ERROR TCA9548A_Get_Channels(uint8_t *channels)
+TCA9546A_ERROR TCA9546A_Get_Channels(uint8_t *channels)
 {
 
     HAL_StatusTypeDef status;
 
-    /* Read 1 byte from the TCA9548A, will byte tells us which channels are open */
-    status = TCA9548A_Read(channels);
-    TCA9548A_ERROR_HANDLE(status); /* Stop if it failed */
+    /* Read 1 byte from the TCA9546A, will byte tells us which channels are open */
+    status = TCA9546A_Read(channels);
+    TCA9546A_ERROR_HANDLE(status); /* Stop if it failed */
 
     /* Update our internal memory with what we just read */
-    state.current_channels = *channels;
+    TCA9546A_state.current_channels = *channels;
 
-    return TCA9548A_SUCCESS;
+    return TCA9546A_SUCCESS;
 }
 
 /**
- * @brief Check if the TCA9548A is present and responding
+ * @brief Check if the TCA9546A is present and responding
  *
  * NOTE: im blanking i return later
  *
@@ -365,16 +365,16 @@ TCA9548A_ERROR TCA9548A_Get_Channels(uint8_t *channels)
  * @return true if device is present and responding
  *         false if no response (device not connected or wrong address)
  */
-bool TCA9548A_Is_Present(void)
+bool TCA9546A_Is_Present(void)
 {
 
     HAL_StatusTypeDef status;
 
     /* If device is there, it will respond with "ACK" (acknowledge). */
-    status = HAL_I2C_IsDeviceReady(TCA9548A_I2C,
-                                   state.device_address << 1,
+    status = HAL_I2C_IsDeviceReady(TCA9546A_I2C,
+                                   TCA9546A_state.device_address << 1,
                                    3,
-                                   TCA9548A_WRITE_TIMEOUT);
+                                   TCA9546A_WRITE_TIMEOUT);
 
     /* Convert HAL status to simple true/false
      * HAL_OK (0) = true, anything else = false */
