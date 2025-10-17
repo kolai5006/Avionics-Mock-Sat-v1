@@ -13,6 +13,7 @@ typedef enum{
 	HC05_SUCCESS        = 0U,
 	HC05_NOT_DETECTED   = 1U,
 	HC05_BUSY			= 2U,
+	HC05_NOT_BUSY		= 4U,
 } HC05_ERROR;
 
 
