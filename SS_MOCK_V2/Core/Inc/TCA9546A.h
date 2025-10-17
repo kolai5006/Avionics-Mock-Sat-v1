@@ -3,14 +3,11 @@
  * @file    tca9546A.h
  * @brief   TCA9546A I2C Switch Driver for STM32L496
  * @author  Ayleen Perez
- * @date    2025
+ * @date    October 17, 2025
  ******************************************************************************
  * @attention
- *
- * Will finish documentation laterish? LMK
  * - Supports Standard Mode (100kHz) and Fast Mode (400kHz)
  * - Uses STM32L4 HAL driver
- *
  ******************************************************************************
  */
 

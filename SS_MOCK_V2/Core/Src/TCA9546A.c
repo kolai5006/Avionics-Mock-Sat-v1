@@ -4,8 +4,21 @@
  * @brief   TCA9546A I2C Switch Driver Implementation
  ******************************************************************************
  *
- * will finnish this documentation section later
+ * This file contains the driver code for the TCA9546A I2C multiplexer.
+ * The TCA9546A lets you connect multiple I2C devices with the same address
+ * by switching between 4 independent channels.
  *
+ * HOW IT WORKS:
+ * - You send a byte over I2C to control which channels are active
+ * - Each bit in the byte represents one channel (bit 0-3 = channels 0-3)
+ * - Bit = 1 means channel is ON, bit = 0 means OFF
+ *
+ * QUICK START:
+ * 1. Mount your I2C peripheral with TCA9546A_I2C_Mount()
+ * 2. Initialize with TCA9546A_Init() - tells it which address to use
+ * 3. Enable a channel with TCA9546A_Enable_Channel()
+ * 4. Talk to your sensor/device on that channel
+ * 5. Switch channels whenever you need to talk to a different device
  *
  ******************************************************************************
  */
@@ -207,7 +220,7 @@ void TCA9546A_HW_Reset_Mount(GPIO_TypeDef *GPIO_Port, uint16_t GPIO_Pin)
 /**
  * @brief Initialize the TCA9546A and prepare it for use
  */
-TCA9546A_ERROR TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
+TCA9546A_StatusTypeDef TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
 {
 
     HAL_StatusTypeDef status;
@@ -264,7 +277,7 @@ TCA9546A_ERROR TCA9546A_Init(uint8_t a2, uint8_t a1, uint8_t a0)
  * @param channels Byte where each bit controls one channel
  * @return TCA9546A_SUCCESS if successful
  */
-TCA9546A_ERROR TCA9546A_Select_Channels(uint8_t channels)
+TCA9546A_StatusTypeDef TCA9546A_Select_Channels(uint8_t channels)
 {
 
     HAL_StatusTypeDef status;
@@ -287,7 +300,7 @@ TCA9546A_ERROR TCA9546A_Select_Channels(uint8_t channels)
  * @param channel Which channel to enable (0-3)
  * @return TCA9546A_SUCCESS if successful
  */
-TCA9546A_ERROR TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel)
+TCA9546A_StatusTypeDef TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel)
 {
     /* Just call Select_Channels with this one channel */
     return TCA9546A_Select_Channels((uint8_t)channel);
@@ -298,7 +311,7 @@ TCA9546A_ERROR TCA9546A_Enable_Channel(TCA9546A_CHANNEL channel)
  *
  * @return TCA9546A_SUCCESS if successful
  */
-TCA9546A_ERROR TCA9546A_Disable_All_Channels(void)
+TCA9546A_StatusTypeDef TCA9546A_Disable_All_Channels(void)
 {
     /* Send 0x00 (all bits = 0) to close all channels */
     return TCA9546A_Select_Channels(TCA9546A_NO_CHANNEL);
@@ -310,7 +323,7 @@ TCA9546A_ERROR TCA9546A_Disable_All_Channels(void)
  * @param channels Channel(s) to add
  * @return TCA9546A_SUCCESS if successful
  */
-TCA9546A_ERROR TCA9546A_Add_Channels(uint8_t channels)
+TCA9546A_StatusTypeDef TCA9546A_Add_Channels(uint8_t channels)
 {
     /* bitwise OR to combine current channels with new ones */
     uint8_t new_channels = TCA9546A_state.current_channels | channels;
@@ -324,7 +337,7 @@ TCA9546A_ERROR TCA9546A_Add_Channels(uint8_t channels)
  * @param channels Channel(s) to remove
  * @return TCA9546A_SUCCESS if successful
  */
-TCA9546A_ERROR TCA9546A_Remove_Channels(uint8_t channels)
+TCA9546A_StatusTypeDef TCA9546A_Remove_Channels(uint8_t channels)
 {
     /* bitwise AND with NOT to remove specific channels */
     uint8_t new_channels = TCA9546A_state.current_channels & ~channels;
@@ -338,7 +351,7 @@ TCA9546A_ERROR TCA9546A_Remove_Channels(uint8_t channels)
  * @param channels Pointer to variable where result will be stored
  * @return TCA9546A_SUCCESS if read was successful
  */
-TCA9546A_ERROR TCA9546A_Get_Channels(uint8_t *channels)
+TCA9546A_StatusTypeDef TCA9546A_Get_Channels(uint8_t *channels)
 {
 
     HAL_StatusTypeDef status;
