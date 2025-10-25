@@ -87,6 +87,26 @@ HC05_ERROR  HC05_TransmitString(const char *str){
 }
 
 /**
+ * @brief Send float via HC-05
+ */
+HC05_ERROR HC05_TransmitFloat(float value)
+{
+    char buffer[16];
+    int32_t int_part = (int32_t)value;
+    int32_t frac_part = (int32_t)((value - int_part) * 100);
+
+    /* Handle negative values */
+    if (frac_part < 0) {
+        frac_part = -frac_part;
+    }
+
+    /* Format: [-]XXX.XX */
+    snprintf(buffer, sizeof(buffer), "%ld.%02ld", int_part, frac_part);
+
+    return HC05_TransmitString(buffer);
+}
+
+/**
  * @brief Get number of bytes available in RX buffer
  */
 uint16_t 	HC05_Available(void){
@@ -225,6 +245,7 @@ void HC05_TxCpltCallback(UART_HandleTypeDef *huart)
         hc05.tx_busy = HC05_NOT_BUSY;
     }
 }
+
 
 
 
