@@ -39,6 +39,7 @@ typedef struct {
 HC05_ERROR	HC05_Init(UART_HandleTypeDef *huart);
 HC05_ERROR 	HC05_Transmit(uint8_t *data, uint16_t len);
 HC05_ERROR  HC05_TransmitString(const char *str);
+HC05_ERROR  HC05_TransmitFloat(float value);
 uint16_t 	HC05_Available(void);
 HC05_ERROR 	HC05_Read(uint8_t *data);
 uint16_t 	HC05_ReadBytes(uint8_t *buffer, uint16_t len);
@@ -46,5 +47,6 @@ uint16_t 	HC05_ReadLine(char *buffer, uint16_t max_len);
 HC05_ERROR	HC05_IsTxComplete(void);
 
 void 		HC05_FlushRx(void);
+
 
 
