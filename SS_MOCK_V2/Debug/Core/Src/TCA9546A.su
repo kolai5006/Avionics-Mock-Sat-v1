@@ -1,0 +1,12 @@
+../Core/Src/TCA9546A.c:96:33:TCA9546A_Write	32	static
+../Core/Src/TCA9546A.c:125:33:TCA9546A_Read	32	static
+../Core/Src/TCA9546A.c:156:20:TCA9546A_ERROR_HANDLE	16	static
+../Core/Src/TCA9546A.c:198:6:TCA9546A_I2C_Mount	16	static
+../Core/Src/TCA9546A.c:223:24:TCA9546A_Init	24	static
+../Core/Src/TCA9546A.c:280:24:TCA9546A_Select_Channels	24	static
+../Core/Src/TCA9546A.c:303:24:TCA9546A_Enable_Channel	16	static
+../Core/Src/TCA9546A.c:314:24:TCA9546A_Disable_All_Channels	8	static
+../Core/Src/TCA9546A.c:326:24:TCA9546A_Add_Channels	24	static
+../Core/Src/TCA9546A.c:340:24:TCA9546A_Remove_Channels	24	static
+../Core/Src/TCA9546A.c:354:24:TCA9546A_Get_Channels	24	static
+../Core/Src/TCA9546A.c:381:6:TCA9546A_Is_Present	16	static
