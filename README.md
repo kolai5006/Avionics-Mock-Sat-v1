@@ -1,6 +1,10 @@
 # Avionics-Mock-Sat-v1
 Repository For CSULB's SharkSat first MockSat 
 
+#THIS REPOSITORY IS DEPRICATED
+We are using a new repository
+coming soon!!!
+
 Disclaimer:
 dont mind the name from ss_mock_v2 das what adam named it in cube ide
 
